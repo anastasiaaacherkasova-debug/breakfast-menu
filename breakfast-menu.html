@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Завтрак для Саши 🌸</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    background-color: #fdf6f0;
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(255, 220, 200, 0.4) 0%, transparent 40%),
+      radial-gradient(circle at 90% 80%, rgba(255, 200, 210, 0.35) 0%, transparent 40%),
+      radial-gradient(circle at 50% 50%, rgba(255, 240, 230, 0.2) 0%, transparent 60%);
+    font-family: 'Lato', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px 60px;
+  }
+
+  /* Floating hearts */
+  .hearts {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .heart {
+    position: absolute;
+    font-size: 14px;
+    opacity: 0;
+    animation: floatUp linear infinite;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.4; }
+    90% { opacity: 0.2; }
+    100% { transform: translateY(-10vh) rotate(20deg); opacity: 0; }
+  }
+
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 520px;
+  }
+
+  /* Kiss */
+  .kiss-badge {
+    text-align: center;
+    margin-bottom: 6px;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  .kiss-badge span {
+    font-size: 42px;
+    display: inline-block;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  .header .eyebrow {
+    font-family: 'Lato', sans-serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #c9897a;
+    margin-bottom: 10px;
+  }
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 38px;
+    font-weight: 700;
+    color: #3d2c2c;
+    line-height: 1.1;
+  }
+  .header h1 em {
+    font-style: italic;
+    color: #c9544a;
+  }
+  .header .date-line {
+    margin-top: 10px;
+    font-size: 13px;
+    color: #b89090;
+    letter-spacing: 1px;
+  }
+
+  /* Divider */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 22px 0;
+    color: #d4a0a0;
+    font-size: 13px;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #e8c5c5, transparent);
+  }
+
+  /* Menu card */
+  .menu-card {
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 24px;
+    padding: 32px 30px 28px;
+    box-shadow:
+      0 4px 30px rgba(180, 100, 100, 0.08),
+      0 1px 0px rgba(255,255,255,0.9) inset;
+    border: 1px solid rgba(230, 190, 185, 0.4);
+    backdrop-filter: blur(8px);
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #c9897a;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, #e8c5c5, transparent);
+  }
+
+  .menu-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 13px 0;
+    border-bottom: 1px solid rgba(230, 200, 195, 0.3);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 8px;
+    padding-left: 8px;
+    margin: 0 -8px;
+  }
+  .menu-item:last-child { border-bottom: none; }
+  .menu-item:hover { background: rgba(255, 230, 225, 0.3); }
+  .menu-item.selected { background: rgba(255, 210, 200, 0.25); }
+
+  .checkbox {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid #ddb0a8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.25s ease;
+    background: white;
+  }
+  .menu-item.selected .checkbox {
+    background: #c9544a;
+    border-color: #c9544a;
+  }
+  .checkbox svg {
+    opacity: 0;
+    transform: scale(0.5);
+    transition: all 0.2s ease;
+  }
+  .menu-item.selected .checkbox svg {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .item-emoji {
+    font-size: 22px;
+    width: 30px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .item-text {
+    flex: 1;
+  }
+  .item-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    color: #3d2c2c;
+    font-weight: 400;
+  }
+  .item-desc {
+    font-size: 11.5px;
+    color: #b89090;
+    margin-top: 2px;
+    font-weight: 300;
+    letter-spacing: 0.3px;
+  }
+
+  .section-gap { margin-top: 28px; }
+
+  /* Love note */
+  .love-note {
+    text-align: center;
+    margin: 26px 0 24px;
+    padding: 18px 24px;
+    background: linear-gradient(135deg, rgba(255, 200, 190, 0.3), rgba(255, 220, 210, 0.2));
+    border-radius: 16px;
+    border: 1px solid rgba(220, 160, 150, 0.25);
+  }
+  .love-note p {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 15px;
+    color: #8b4a4a;
+    line-height: 1.6;
+  }
+  .love-note .sig {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #c9897a;
+    font-style: normal;
+    font-family: 'Lato', sans-serif;
+    letter-spacing: 0.5px;
+  }
+
+  /* Submit button */
+  .submit-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #c9544a, #d4726a);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 15px;
+    font-family: 'Lato', sans-serif;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 20px rgba(180, 70, 65, 0.25);
+    margin-top: 4px;
+  }
+  .submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(180, 70, 65, 0.35);
+    background: linear-gradient(135deg, #b84540, #c4625a);
+  }
+  .submit-btn:active { transform: translateY(0); }
+  .submit-btn:disabled {
+    background: linear-gradient(135deg, #d4a0a0, #dbb0b0);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* Success state */
+  .success-msg {
+    display: none;
+    text-align: center;
+    padding: 30px 20px;
+    animation: fadeIn 0.5s ease;
+  }
+  .success-msg .big-emoji { font-size: 52px; margin-bottom: 12px; }
+  .success-msg h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: #3d2c2c;
+    margin-bottom: 8px;
+  }
+  .success-msg p {
+    font-size: 14px;
+    color: #b89090;
+    line-height: 1.6;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .no-select-warn {
+    text-align: center;
+    font-size: 13px;
+    color: #c9544a;
+    margin-top: 10px;
+    min-height: 18px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .no-select-warn.show { opacity: 1; }
+
+  /* Confetti canvas */
+  #confetti-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 999;
+  }
+</style>
+
+</head>
+<body>
+
+<canvas id="confetti-canvas"></canvas>
+
+<!-- Floating hearts background -->
+
+<div class="hearts" id="hearts"></div>
+
+<div class="wrapper">
+
+  <div class="kiss-badge"><span>💋</span></div>
+
+  <div class="header">
+    <div class="eyebrow">С Днём Рождения</div>
+    <h1>Доброе утро,<br><em>Сашенька</em> ☀️</h1>
+    <div class="date-line">Твой особенный день • 7 мая 2025</div>
+  </div>
+
+  <div class="divider">✦ меню завтрака ✦</div>
+
+  <div id="menu-form">
+    <div class="menu-card">
+
+```
+  <div class="section-title">🍳 Еда</div>
+
+  <div class="menu-item" onclick="toggle(this)" data-name="Овсянка на молоке">
+    <div class="checkbox">
+      <svg width="11" height="9" viewBox="0 0 11 9" fill="none">
+        <path d="M1 4L4.5 7.5L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="item-emoji">🥣</div>
+    <div class="item-text">
+      <div class="item-name">Овсянка на молоке</div>
+      <div class="item-desc">Нежная, тёплая, с любовью</div>
+    </div>
+  </div>
+
+  <div class="menu-item" onclick="toggle(this)" data-name="Сырники">
+    <div class="checkbox">
+      <svg width="11" height="9" viewBox="0 0 11 9" fill="none">
+        <path d="M1 4L4.5 7.5L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="item-emoji">🧀</div>
+    <div class="item-text">
+      <div class="item-name">Сырники</div>
+      <div class="item-desc">Со сметаной или вареньем</div>
+    </div>
+  </div>
+
+  <div class="menu-item" onclick="toggle(this)" data-name="Салат с тунцом">
+    <div class="checkbox">
+      <svg width="11" height="9" viewBox="0 0 11 9" fill="none">
+        <path d="M1 4L4.5 7.5L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="item-emoji">🥗</div>
+    <div class="item-text">
+      <div class="item-name">Салат с тунцом</div>
+      <div class="item-desc">Свежий, лёгкий, сытный</div>
+    </div>
+  </div>
+
+  <div class="menu-item" onclick="toggle(this)" data-name="Сэндвич с тунцом, авокадо и яйцом">
+    <div class="checkbox">
+      <svg width="11" height="9" viewBox="0 0 11 9" fill="none">
+        <path d="M1 4L4.5 7.5L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="item-emoji">🥪</div>
+    <div class="item-text">
+      <div class="item-name">Сэндвич с тунцом, авокадо и яйцом</div>
+      <div class="item-desc">Идеальный именинный бранч</div>
+    </div>
+  </div>
+
+  <div class="menu-item" onclick="toggle(this)" data-name="Омлет">
+    <div class="checkbox">
+      <svg width="11" height="9" viewBox="0 0 11 9" fill="none">
+        <path d="M1 4L4.5 7.5L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="item-emoji">🍳</div>
+    <div class="item-text">
+      <div class="item-name">Омлет</div>
+      <div class="item-desc">Воздушный, как настроение сегодня</div>
+    </div>
+  </div>
+
+  <div class="section-gap"></div>
+  <div class="section-title">🍰 Десерты</div>
+
+  <div class="menu-item" onclick="toggle(this)" data-name="Кусочек торта">
+    <div class="checkbox">
+      <svg width="11" height="9" viewBox="0 0 11 9" fill="none">
+        <path d="M1 4L4.5 7.5L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="item-emoji">🎂</div>
+    <div class="item-text">
+      <div class="item-name">Кусочек торта</div>
+      <div class="item-desc">Сладкий, как ты</div>
+    </div>
+  </div>
+
+  <div class="menu-item" onclick="toggle(this)" data-name="Твоя маленькая тварь 💋">
+    <div class="checkbox">
+      <svg width="11" height="9" viewBox="0 0 11 9" fill="none">
+        <path d="M1 4L4.5 7.5L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="item-emoji">💋</div>
+    <div class="item-text">
+      <div class="item-name">Твоя маленькая тварь</div>
+      <div class="item-desc">Всегда в комплекте ❤️</div>
+    </div>
+  </div>
+
+  <div class="section-gap"></div>
+  <div class="section-title">☕ Напитки</div>
+
+  <div class="menu-item" onclick="toggle(this)" data-name="Чёрный кофе">
+    <div class="checkbox">
+      <svg width="11" height="9" viewBox="0 0 11 9" fill="none">
+        <path d="M1 4L4.5 7.5L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="item-emoji">☕</div>
+    <div class="item-text">
+      <div class="item-name">Чёрный кофе</div>
+      <div class="item-desc">Крепкий и ароматный</div>
+    </div>
+  </div>
+
+  <div class="menu-item" onclick="toggle(this)" data-name="Чай чёрный">
+    <div class="checkbox">
+      <svg width="11" height="9" viewBox="0 0 11 9" fill="none">
+        <path d="M1 4L4.5 7.5L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="item-emoji">🍵</div>
+    <div class="item-text">
+      <div class="item-name">Чай чёрный</div>
+      <div class="item-desc">Насыщенный, согревающий</div>
+    </div>
+  </div>
+
+  <div class="menu-item" onclick="toggle(this)" data-name="Чай зелёный">
+    <div class="checkbox">
+      <svg width="11" height="9" viewBox="0 0 11 9" fill="none">
+        <path d="M1 4L4.5 7.5L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="item-emoji">🫖</div>
+    <div class="item-text">
+      <div class="item-name">Чай зелёный</div>
+      <div class="item-desc">Лёгкий, свежий, нежный</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="love-note">
+  <p>Сегодня всё только для тебя —<br>выбирай, что душа пожелает 🌸<br>Я уже иду готовить.</p>
+  <div class="sig">💋 С любовью, твоя Настя</div>
+</div>
+
+<button class="submit-btn" onclick="sendOrder()">Отправить заказ 💌</button>
+<div class="no-select-warn" id="warn">Выбери хотя бы что-нибудь, солнышко 🌸</div>
+```
+
+  </div>
+
+  <!-- Success state -->
+
+  <div class="success-msg" id="success">
+    <div class="big-emoji">💌</div>
+    <h2>Заказ отправлен!</h2>
+    <p>Настя уже знает, что тебе приготовить.<br>Оставайся в постели — завтрак будет скоро 🥰</p>
+  </div>
+
+</div>
+
+<script>
+  // Floating hearts
+  const heartContainer = document.getElementById('hearts');
+  const emojis = ['💗','💕','🌸','💖','✨','💝','🌷'];
+  for (let i = 0; i < 18; i++) {
+    const el = document.createElement('div');
+    el.className = 'heart';
+    el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    el.style.left = Math.random() * 100 + '%';
+    el.style.animationDuration = (8 + Math.random() * 14) + 's';
+    el.style.animationDelay = (Math.random() * 12) + 's';
+    el.style.fontSize = (10 + Math.random() * 14) + 'px';
+    heartContainer.appendChild(el);
+  }
+
+  function toggle(el) {
+    el.classList.toggle('selected');
+    document.getElementById('warn').classList.remove('show');
+  }
+
+  function getSelected() {
+    return [...document.querySelectorAll('.menu-item.selected')].map(el => el.dataset.name);
+  }
+
+  async function sendOrder() {
+    const items = getSelected();
+    if (items.length === 0) {
+      document.getElementById('warn').classList.add('show');
+      return;
+    }
+
+    const btn = document.querySelector('.submit-btn');
+    btn.disabled = true;
+    btn.textContent = 'Отправляю... 💌';
+
+    try {
+      const res = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          service_id: 'service_fgfe1ft',
+          template_id: 'template_yizgkut',
+          user_id: 'g7HF-sVJBpWdST3qP',
+          template_params: {
+            name: 'Саша',
+            message: `Саша выбрал на завтрак:\n\n${items.map(i => '• ' + i).join('\n')}\n\nБеги готовить! 💕`,
+            time: new Date().toLocaleTimeString('ru-RU', {hour: '2-digit', minute: '2-digit'})
+          }
+        })
+      });
+      if (!res.ok) throw new Error(await res.text());
+      document.getElementById('menu-form').style.display = 'none';
+      document.getElementById('success').style.display = 'block';
+      launchConfetti();
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = 'Отправить заказ 💌';
+      alert('Что-то пошло не так 😢 Попробуй ещё раз');
+      console.error(err);
+    }
+  }
+
+  // Mini confetti
+  function launchConfetti() {
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const colors = ['#c9544a','#f5a0a0','#ffd6cc','#ffb3c1','#ff8fab','#ffc8dd'];
+    const pieces = Array.from({length: 120}, () => ({
+      x: Math.random() * canvas.width,
+      y: -20,
+      r: 4 + Math.random() * 5,
+      d: 2 + Math.random() * 3,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      tilt: Math.random() * 10 - 5,
+      tiltSpeed: 0.05 + Math.random() * 0.1
+    }));
+
+    let frame = 0;
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      pieces.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, 2 * Math.PI);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+        p.y += p.d;
+        p.x += Math.sin(frame / 20) * 1.2;
+        p.tilt += p.tiltSpeed;
+      });
+      frame++;
+      if (frame < 200) requestAnimationFrame(draw);
+      else ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+    draw();
+  }
+</script>
+
+</body>
+</html>
