@@ -237,6 +237,39 @@
     letter-spacing: 0.5px;
   }
 
+  /* Notes */
+  .notes-section {
+    margin: 20px 0 0;
+    background: rgba(255,255,255,0.85);
+    border-radius: 18px;
+    padding: 20px 22px;
+    border: 1px solid rgba(230, 190, 185, 0.4);
+  }
+  .notes-label {
+    display: block;
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    color: #8b4a4a;
+    margin-bottom: 10px;
+  }
+  textarea {
+    width: 100%;
+    min-height: 90px;
+    border: 1.5px solid #e8c5c5;
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-family: 'Lato', sans-serif;
+    font-size: 14px;
+    color: #3d2c2c;
+    background: #fff9f8;
+    resize: none;
+    outline: none;
+    transition: border 0.2s;
+    box-sizing: border-box;
+  }
+  textarea:focus { border-color: #c9544a; }
+  textarea::placeholder { color: #c9b0b0; }
+
   /* Submit button */
   .submit-btn {
     width: 100%;
@@ -477,11 +510,19 @@
 
 </div>
 
-<div class="love-note">
-  <p>Сегодня всё только для тебя —<br>выбирай, что душа пожелает 🌸<br>Я уже иду готовить.</p>
-  <div class="sig">💋 С любовью, твоя Настя</div>
-</div>
+<div class="notes-section">
+<label class="notes-label">📝 Пожелания по приготовлению</label>
+<textarea id="notes" placeholder="Например: кофе покрепче, сырники без варенья... 🥣"></textarea>
+```
 
+  </div>
+
+  <div class="love-note">
+      <p>Сегодня всё только для тебя —<br>выбирай, что душа пожелает 🌸<br>Я уже иду готовить.</p>
+      <div class="sig">💋 С любовью, твоя Настя</div>
+    </div>
+
+```
 <button class="submit-btn" onclick="sendOrder()">Отправить заказ 💌</button>
 <div class="no-select-warn" id="warn">Выбери хотя бы что-нибудь, солнышко 🌸</div>
 ```
@@ -533,6 +574,9 @@
     btn.disabled = true;
     btn.textContent = 'Отправляю... 💌';
 
+    const notes = document.getElementById('notes').value.trim();
+    const notesText = notes ? `\n\nПожелания: ${notes}` : '';
+
     try {
       const res = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
         method: 'POST',
@@ -543,7 +587,7 @@
           user_id: 'g7HF-sVJBpWdST3qP',
           template_params: {
             name: 'Саша',
-            message: `Саша выбрал на завтрак:\n\n${items.map(i => '• ' + i).join('\n')}\n\nБеги готовить! 💕`,
+            message: `Саша выбрал на завтрак:\n\n${items.map(i => '• ' + i).join('\n')}${notesText}\n\nБеги готовить! 💕`,
             time: new Date().toLocaleTimeString('ru-RU', {hour: '2-digit', minute: '2-digit'})
           }
         })
